@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fale Conosco - ConectFood</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-warning py-4">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-3" href="index.html">ConectFood</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTop" aria-controls="navbarTop" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarTop">
+        <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle fs-5" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Nossos Serviços
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="doadores.html">Doadores</a></li>
+              <li><a class="dropdown-item" href="ongs.html">ONGs</a></li>
+              <li><a class="dropdown-item" href="comopossoajudar.html">Como ajudar?</a></li>
+            </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="container my-5">
+    <h2 class="text-center mb-4 fw-bold">Fale Conosco</h2>
+    <form id="faleConoscoForm" class="needs-validation" novalidate>
+      <div class="mb-3">
+        <label for="nome" class="form-label">Nome Completo</label>
+        <input type="text" class="form-control" id="nome" placeholder="Seu nome completo" required>
+        <div class="invalid-feedback">Por favor, informe seu nome completo (nome e sobrenome).</div>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input type="email" class="form-control" id="email" placeholder="seuemail@exemplo.com" required>
+        <div class="invalid-feedback">Informe um e-mail válido.</div>
+      </div>
+      <div class="mb-3">
+        <label for="mensagem" class="form-label">Mensagem</label>
+        <textarea class="form-control" id="mensagem" rows="5" placeholder="Escreva sua mensagem (mínimo 30 e máximo 500 caracteres)" minlength="30" maxlength="500" required></textarea>
+        <div class="invalid-feedback">A mensagem deve ter entre 30 e 500 caracteres.</div>
+      </div>
+      <button type="submit" class="btn btn-warning fw-bold">Enviar Mensagem</button>
+      <div id="successMessage" class="alert alert-success mt-3 d-none" role="alert">
+        Sua mensagem foi enviada com sucesso! Entraremos em contato em breve.
+      </div>
+    </form>
+  </section>
+
+  <footer class="bg-dark text-white text-center py-4">
+    <div class="d-flex justify-content-center mb-3">
+      <a href="https://facebook.com" class="text-warning mx-3" target="_blank" rel="noopener"><i class="fab fa-facebook fa-2x"></i></a>
+      <a href="https://instagram.com" class="text-warning mx-3" target="_blank" rel="noopener"><i class="fab fa-instagram fa-2x"></i></a>
+      <a href="https://twitter.com" class="text-warning mx-3" target="_blank" rel="noopener"><i class="fab fa-twitter fa-2x"></i></a>
+    </div>
+    <p class="fs-5 fst-italic mb-4">“É na dificuldade que se encontra a oportunidade de dar um passo frente à inovação.”</p>
+    <hr class="mx-5" style="border-color: rgba(255, 255, 255, 0.3);" />
+    <p class="mb-0 small">
+      © 2025 Direitos reservados - ConectFood - 00.111.222/0001-00<br />
+      <a href="#" class="text-warning text-decoration-none">Termos de uso e serviços</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+      <a href="#" class="text-warning text-decoration-none">Gestão de Cookies</a>
+    </p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      const form = document.getElementById('faleConoscoForm');
+      const successMessage = document.getElementById('successMessage');
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const nomeInput = document.getElementById('nome');
+        const nome = nomeInput.value.trim();
+        const nomeValido = nome.split(' ').length >= 2;
+
+        if (!nomeValido) {
+          nomeInput.setCustomValidity('Por favor, informe nome e sobrenome.');
+        } else {
+          nomeInput.setCustomValidity('');
+        }
+
+        const mensagemInput = document.getElementById('mensagem');
+        if (mensagemInput.value.length < 30 || mensagemInput.value.length > 500) {
+          mensagemInput.setCustomValidity('A mensagem deve ter entre 30 e 500 caracteres.');
+        } else {
+          mensagemInput.setCustomValidity('');
+        }
+
+        if (form.checkValidity()) {
+          successMessage.classList.remove('d-none');
+          form.reset();
+          form.classList.remove('was-validated');
+        } else {
+          form.classList.add('was-validated');
+          successMessage.classList.add('d-none');
+        }
+      }, false);
+    })();
+  </script>
+</body>
+</html>
