@@ -24,12 +24,12 @@
               Nossos Serviços
             </a>
             <ul class="dropdown-menu" aria-labelledby="servicosDropdown">
-              <li><a class="dropdown-item" href="comopossoajudar.html">Doadores</a></li>
-              <li><a class="dropdown-item" href="comopossoajudar.html">Como posso ajudar?</a></li>
+              <li><a class="dropdown-item" href="doadores.html">Doadores</a></li>
+              <li><a class="dropdown-item" href="como-ajudar.html">Como posso ajudar?</a></li>
             </ul>
           </li>
           <li class="nav-item ms-3">
-            <a class="btn btn-dark text-warning fw-bold px-4 py-2 shadow-sm" href="Faleconosco.html">Fale Conosco</a>
+            <a class="btn btn-dark text-warning fw-bold px-4 py-2 shadow-sm" href="#contato">Fale Conosco</a>
           </li>
         </ul>
       </div>
@@ -95,24 +95,23 @@
       <div class="col-md-6 text-start">
         <h5 class="fw-bold mb-3" style="font-size: 1.25rem;">
           Possui interesse em fazer a diferença com o nosso projeto?<br />
-          Torne-se uma de nossas ONGs parceiras!
+          Torne-se um de nossos doadores!
         </h5>
       </div>
     </div>
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <form id="emailForm" class="d-flex rounded border p-3">
+        <form id="emailForm" class="d-flex rounded border p-3" role="form" novalidate>
           <input
             type="email"
             class="form-control me-3"
             placeholder="Informe seu e-mail para prosseguir com o cadastro"
             aria-label="E-mail"
+            required
+            id="emailInput"
           />
           <button class="btn btn-warning fw-bold px-4" type="submit">Enviar</button>
         </form>
-        <div id="successMessage" class="alert alert-success mt-3" style="display:none;">
-          E-mail enviado com sucesso! Obrigado pelo seu interesse.
-        </div>
       </div>
     </div>
   </section>
@@ -143,5 +142,16 @@
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('emailForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const emailInput = document.getElementById('emailInput');
+      if (!emailInput.checkValidity()) {
+        emailInput.reportValidity();
+        return;
+      }
+      window.location.href = 'cadastro.html';
+    });
+  </script>
 </body>
 </html>
