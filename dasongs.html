@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>ConectFood - Área da ONG</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #fff8f0; color: #333; }
+  .navbar { background-color: #BA5007; }
+  .navbar a { color: #fff !important; }
+  .navbar a:hover { color: #FFD1A9 !important; }
+
+  .kpi-card { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 25px; transition: transform 0.3s; color: #333; }
+  .kpi-card:hover { transform: translateY(-4px); }
+  .kpi-icon { font-size: 2.2rem; opacity: 0.8; margin-bottom: 10px; }
+  .kpi-value { font-weight: 700; font-size: 2.4rem; }
+  .kpi-label { font-weight: 500; font-size: 1.1rem; margin-top: 5px; color: #555; }
+  .trend { font-size: 0.9rem; margin-top: 8px; display: flex; justify-content: center; align-items: center; gap: 4px; }
+  .trend i { font-size: 1rem; }
+  .card-gradient1 { background: linear-gradient(90deg, #FFD1A9, #FBC097); }
+  .card-gradient2 { background: linear-gradient(90deg, #BA5007, #E6733D); color: #fff; }
+  .card-gradient3 { background: linear-gradient(90deg, #F5A623, #FFCB7D); color: #fff; }
+
+  .btn-claro { background: linear-gradient(90deg, #FFD1A9, #FBC097); color: #333; font-weight: bold; border-radius: 12px; transition: all 0.3s ease; margin:2px;}
+  .btn-claro:hover { transform: scale(1.05); background: linear-gradient(90deg, #E6A87C, #F5C99F); }
+
+  table { background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  th { background-color: #BA5007; color: #fff; }
+  td, th { vertical-align: middle !important; }
+  .badge-status { padding: 0.4em 0.8em; border-radius: 12px; font-size: 0.85rem; }
+  .badge-frete { padding: 0.4em 0.8em; border-radius: 12px; font-size: 0.75rem; background-color: #0d6efd; color: #fff; margin-left:5px; }
+
+  footer { background-color: #BA5007; color: #fff; padding: 40px 0 20px; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg py-3">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-3" href="#">ConectFood</a>
+    <div class="collapse navbar-collapse justify-content-end">
+      <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+        <li class="nav-item">
+          <a href="#" class="btn btn-claro px-3 py-2 d-flex align-items-center">
+            <i class="fa fa-user me-2"></i>Perfil
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="container my-5">
+
+  <!-- Cards KPI -->
+  <div class="row mb-4 g-4">
+    <div class="col-md-4">
+      <div class="kpi-card card-gradient1 text-center">
+        <i class="fa fa-box kpi-icon"></i>
+        <div class="kpi-value" id="kpiRecebidas">0</div>
+        <div class="kpi-label">Doações Recebidas</div>
+        <div class="trend text-success"><i class="fa fa-arrow-up"></i> +15% mês</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="kpi-card card-gradient2 text-center">
+        <i class="fa fa-clock kpi-icon"></i>
+        <div class="kpi-value" id="kpiPendentes">0</div>
+        <div class="kpi-label">Doações Pendentes</div>
+        <div class="trend text-warning"><i class="fa fa-arrow-down"></i> -5% mês</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="kpi-card card-gradient3 text-center">
+        <i class="fa fa-truck kpi-icon"></i>
+        <div class="kpi-value" id="kpiFretes">0</div>
+        <div class="kpi-label">Fretes Agendados</div>
+        <div class="trend text-info"><i class="fa fa-arrow-up"></i> +10% mês</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row mb-4 g-4">
+    <div class="col-md-8">
+      <div class="card p-3 shadow-sm">
+        <h5 class="mb-3 fw-bold">Evolução das Doações Recebidas</h5>
+        <canvas id="linhaDoacoes" height="250"></canvas>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3 shadow-sm">
+        <h5 class="mb-3 fw-bold">Distribuição por Tipo de Doação</h5>
+        <canvas id="pizzaDoacoes" height="250"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters d-flex flex-wrap gap-3 mb-4">
+    <select class="form-select w-auto filtro" id="filtroEstado">
+      <option value="">Filtrar por Estado</option>
+      <option>GO</option>
+      <option>SP</option>
+      <option>RJ</option>
+    </select>
+    <select class="form-select w-auto filtro" id="filtroTipo">
+      <option value="">Filtrar por Tipo</option>
+      <option>Alimentos</option>
+      <option>Roupas</option>
+      <option>Itens de Higiene</option>
+    </select>
+    <select class="form-select w-auto filtro" id="filtroStatus">
+      <option value="">Filtrar por Status</option>
+      <option>Pendente</option>
+      <option>Recebida</option>
+    </select>
+  </div>
+
+  <!-- Tabela de Doações -->
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle text-center" id="tabelaDoacoes">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Doador</th>
+          <th>Tipo</th>
+          <th>Item</th>
+          <th>Quantidade</th>
+          <th>Estado</th>
+          <th>Status</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+</section>
+
+<footer>
+  <p class="fst-italic">“É na dificuldade que se encontra a oportunidade de dar um passo frente à inovação.”</p>
+  <hr style="border-color: rgba(255,255,255,0.3);">
+  <p>© 2025 Direitos reservados - ConectFood</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let doacoes = [
+  {data:'20/08/2025', doador:'Mercado X', tipo:'Alimentos', item:'Arroz', quantidade:'10kg', estado:'GO', status:'Pendente', frete:false},
+  {data:'21/08/2025', doador:'Mercado Y', tipo:'Roupas', item:'Camisetas', quantidade:'50 peças', estado:'SP', status:'Pendente', frete:false},
+  {data:'22/08/2025', doador:'Mercado Z', tipo:'Itens de Higiene', item:'Sabonetes', quantidade:'30 unidades', estado:'RJ', status:'Recebida', frete:true},
+  {data:'23/08/2025', doador:'Mercado X', tipo:'Alimentos', item:'Feijão', quantidade:'5kg', estado:'GO', status:'Recebida', frete:true}
+];
+
+const ctxLinha = document.getElementById('linhaDoacoes').getContext('2d');
+const linhaChart = new Chart(ctxLinha, {
+  type: 'line',
+  data: { labels:['Mai','Jun','Jul','Ago'], datasets:[{ label:'Doações Recebidas', data:[5,8,10,12], borderColor:'#BA5007', backgroundColor:'rgba(186,80,7,0.1)', fill:true, tension:0.3, pointRadius:5, pointBackgroundColor:'#BA5007' }]},
+  options:{ responsive:true, plugins:{ legend:{ display:true }, tooltip:{ enabled:true } }, scales:{ y:{ beginAtZero:true }, x:{ grid:{ display:false } } } }
+});
+
+const ctxPizza = document.getElementById('pizzaDoacoes').getContext('2d');
+const pizzaChart = new Chart(ctxPizza,{
+  type:'doughnut',
+  data:{ labels:[], datasets:[{ data:[], backgroundColor:['#FFD1A9','#FBC097','#E6A87C','#BA5007','#E6733D'] }] },
+  options:{ responsive:true, plugins:{ legend:{ position:'bottom' }, tooltip:{ enabled:true } } }
+});
+
+function renderTabela(){
+  const estadoFiltro = document.getElementById('filtroEstado').value;
+  const tipoFiltro = document.getElementById('filtroTipo').value;
+  const statusFiltro = document.getElementById('filtroStatus').value;
+  const tbody = document.querySelector('#tabelaDoacoes tbody');
+  tbody.innerHTML='';
+  const filtradas = doacoes.filter(d => 
+    (estadoFiltro==='' || d.estado===estadoFiltro) &&
+    (tipoFiltro==='' || d.tipo===tipoFiltro) &&
+    (statusFiltro==='' || d.status===statusFiltro)
+  );
+
+  let recebidas=0, pendentes=0, fretes=0;
+  const itens = {};
+  filtradas.forEach((d,index) => {
+    if(d.status==='Recebida') recebidas++;
+    if(d.status==='Pendente') pendentes++;
+    if(d.frete) fretes++;
+    itens[d.item] = (itens[d.item] || 0)+1;
+    const badgeClass = d.status==='Pendente' ? 'bg-warning' : 'bg-success';
+    const freteBadge = d.frete ? `<span class="badge-frete"><i class="fa fa-truck"></i> Frete</span>` : '';
+    tbody.innerHTML+=`
+      <tr>
+        <td>${d.data}</td>
+        <td>${d.doador}</td>
+        <td>${d.tipo}</td>
+        <td>${d.item}</td>
+        <td>${d.quantidade}</td>
+        <td>${d.estado}</td>
+        <td><span class="badge ${badgeClass} badge-status">${d.status}</span>${freteBadge}</td>
+        <td>
+          <button class="btn btn-claro btn-sm" onclick="aceitarDoacao(${index})">Aceitar</button>
+          <button class="btn btn-claro btn-sm" onclick="agendarFrete(${index})">Agendar Frete</button>
+        </td>
+      </tr>`;
+  });
+
+  document.getElementById('kpiRecebidas').innerText = recebidas;
+  document.getElementById('kpiPendentes').innerText = pendentes;
+  document.getElementById('kpiFretes').innerText = fretes;
+
+  pizzaChart.data.labels = Object.keys(itens);
+  pizzaChart.data.datasets[0].data = Object.values(itens);
+  pizzaChart.update();
+}
+
+// Aceitar doação
+function aceitarDoacao(index){
+  if(doacoes[index].status==='Pendente'){
+    doacoes[index].status='Recebida';
+    alert(`Doação de ${doacoes[index].item} aceita!`);
+    renderTabela();
+  }
+}
+
+// Agendar frete
+function agendarFrete(index){
+  if(!doacoes[index].frete){
+    doacoes[index].frete=true;
+    alert(`Frete agendado para ${doacoes[index].item}!`);
+    renderTabela();
+  } else {
+    alert(`Frete já está agendado para ${doacoes[index].item}.`);
+  }
+}
+
+// Atualização automática ao mudar filtros
+document.querySelectorAll('.filtro').forEach(el => {
+  el.addEventListener('change', renderTabela);
+});
+
+// Render inicial
+renderTabela();
+</script>
+
+</body>
+</html>
